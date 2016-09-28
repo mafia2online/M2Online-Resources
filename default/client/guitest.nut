@@ -20,6 +20,4 @@ addCommandHandler("destroyGUI", function(pid)
 	}
 });
 
-addasdaw
-
 // eof
