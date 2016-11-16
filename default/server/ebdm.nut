@@ -9,6 +9,8 @@ function scriptInit()
     log( script + " Loaded!" );
     setGameModeText( "EB-DM" );
     setMapName( "Empire Bay" );
+    setSummer(false);
+    setWeather("DT03part03MariaAgnelo");
 
     // Create cars surrounding the spawn bar.
     createVehicle(1, -1567.36, -193.678, -20.1856, -92.0449, 0.223556, 3.04026);
@@ -104,6 +106,18 @@ addCommandHandler("help", function(playerid) {
     }
 });
 
+addCommandHandler("paint", function(playerid, r, g, b) {
+    if (isPlayerInVehicle(playerid)) {
+        local vehicle = getPlayerVehicle(playerid);
+
+        if (!r) r = 255;
+        if (!g) g = 255;
+        if (!b) b = 255;
+
+        setVehicleColour(vehicle, r.tointeger(), g.tointeger(), b.tointeger(), 255, 255, 255);
+    }
+});
+
 addCommandHandler("tptome", function(playerid, pttpid) {
     if (!pttpid) {
         sendPlayerMessage(playerid, "/tptome <pttpid>");
@@ -131,11 +145,25 @@ addCommandHandler("weapons", function(playerid) {
     givePlayerWeapon( playerid, 12, 2500 );
 });
 
+local playerVehicles = {};
+
 addCommandHandler("vehicle", function( playerid, id ) {
     local pos = getPlayerPosition( playerid );
     local rot = getPlayerRotation( playerid );
 
-    createVehicle( id.tointeger(), pos[0] + 2.0, pos[1], pos[2] + 1.0, 0.0, rot[1], 0.0 );
+    if (playerid in playerVehicles) {
+        sendPlayerMessage(playerid, "Removing your old car, and creating new one :)");
+        destroyVehicle(playerVehicles[playerid]);
+    }
+
+    playerVehicles[playerid] <- createVehicle( id.tointeger(), pos[0] + 2.0, pos[1], pos[2] + 1.0, 0.0, rot[1], 0.0 );
+});
+
+addEventHandler("onPlayerDisconnect", function(playerid, reason) {
+    if (playerid in playerVehicles) {
+        destroyVehicle(playerVehicles[playerid]);
+        delete playerVehicles[playerid];
+    }
 });
 
 addCommandHandler("tune", function( playerid ) {
