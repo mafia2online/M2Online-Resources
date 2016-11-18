@@ -229,3 +229,36 @@ addCommandHandler( "die",
         setPlayerHealth( playerid, 0.0 );
     }
 );
+
+addCommandHandler("savepos", function(playerid) {
+    // for info about reading modes check out
+    // http://www.cplusplus.com/reference/cstdio/fopen/
+    local posfile = file("positions.txt", "a");
+    local pos;
+
+    if (isPlayerInVehicle(playerid)) {
+        pos = getVehiclePosition( getPlayerVehicle(playerid) );
+    } else {
+        pos = getPlayerPosition( playerid );
+    }
+
+    // iterate over px,y,z]
+    foreach (idx, value in pos) {
+
+        // convert value to string,
+        // and iterate over each char
+        local coord = value.tostring();
+        for (local i = 0; i < coord.len(); i++) {
+            posfile.writen(coord[i], 'b');
+        }
+
+        // also write whitespace after the number
+        posfile.writen(' ', 'b');
+    }
+
+    // and dont forget push newline before closing
+    posfile.writen('\n', 'b');
+    posfile.close();
+
+    sendPlayerMessage(playerid, "You've saved current position; Check positions.txt near your server .exe")
+});
