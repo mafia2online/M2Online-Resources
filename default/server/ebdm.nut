@@ -230,7 +230,7 @@ addCommandHandler( "die",
     }
 );
 
-addCommandHandler("savepos", function(playerid) {
+addCommandHandler("savepos", function(playerid, ...) {
     // for info about reading modes check out
     // http://www.cplusplus.com/reference/cstdio/fopen/
     local posfile = file("positions.txt", "a");
@@ -240,6 +240,14 @@ addCommandHandler("savepos", function(playerid) {
         pos = getVehiclePosition( getPlayerVehicle(playerid) );
     } else {
         pos = getPlayerPosition( playerid );
+    }
+
+    // read rest of the input string (if there any)
+    // concat it, and push to the pos array
+    if (vargv.len() > 0) {
+        pos.push(vargv.reduce(function(a, b) {
+            return a + " " + b;
+        }));
     }
 
     // iterate over px,y,z]
